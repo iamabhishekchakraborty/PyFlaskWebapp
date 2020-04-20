@@ -11,9 +11,21 @@ $(document).ready(function () {
 	// showBotTyping();
 	// $("#userInput").prop('disabled', true);
 
+    var s = [];
+    var hexDigits = "0123456789abcdef";
+    for (var i = 0; i < 36; i++) {
+        s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+    }
+    s[14] = "4";  // bits 12-15 of the time_hi_and_version field to 0010
+    s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1);  // bits 6-7 of the clock_seq_hi_and_reserved to 01
+    s[8] = s[13] = s[18] = s[23] = "-";
+    var uuid = s.join("");
+
 	//global variables
 	action_name = "utter_greet_info";
-	user_id = "iamabhishek";
+	sender_id = uuid;
+	console.log(sender_id);
+	//user_id = "iamabhishek";
 
 	//if you want the bot to start the conversation
 	// action_trigger();
@@ -40,8 +52,8 @@ function action_trigger() {
 
 	// send an event to the bot, so that bot can start the conversation by greeting the user
 	$.ajax({
-//		url: `http://localhost:5005/conversations/${user_id}/execute`,
-		url: "http://faqcesbot.herokuapp.com:80/conversations/" + user_id + "/execute",
+//		url: `http://localhost:5005/conversations/${sender_id}/execute`,
+		url: "http://chatlead-ai.herokuapp.com:80/conversations/" + sender_id + "/execute",
 		type: "POST",
 		crossDomain: true,
 		contentType: "application/json",
@@ -146,11 +158,11 @@ function send(message) {
 
 	$.ajax({
 //		url: "http://localhost:5005/webhooks/rest/webhook",
-		url: "http://faqcesbot.herokuapp.com:80/webhooks/rest/webhook",
+		url: "http://chatlead-ai.herokuapp.com:80/webhooks/rest/webhook",
 		type: "POST",
 		crossDomain: true,
 		contentType: "application/json",
-		data: JSON.stringify({ message: message, sender: user_id }),
+		data: JSON.stringify({ message: message, sender: sender_id }),
 		success: function (botResponse, status) {
 			console.log("Response from Rasa: ", botResponse, "\nStatus: ", status);
 

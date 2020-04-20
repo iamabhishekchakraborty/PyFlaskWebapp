@@ -1,5 +1,19 @@
 // ========================== greet user proactively ========================
+//Bot pop-up intro
+document.addEventListener('DOMContentLoaded', function() {
+    var elemsTap = document.querySelector('.tap-target');
+    var instancesTap = M.TapTarget.init(elemsTap, {});
+    instancesTap.open();
+    setTimeout(function() { instancesTap.close(); }, 4000);
+
+});
+
+//initialization
 $(document).ready(function () {
+    $('.datepicker').datepicker();
+
+    //Bot pop-up intro
+    $("div").removeClass("tap-target-origin")
 
 	//drop down menu for close, restart conversation & clear the chats.
 	$('.dropdown-trigger').dropdown();
@@ -22,7 +36,7 @@ $(document).ready(function () {
     var uuid = s.join("");
 
 	//global variables
-	action_name = "utter_greet_info";
+	action_name = "utter_greet";
 	sender_id = uuid;
 	console.log(sender_id);
 	//user_id = "iamabhishek";
@@ -297,6 +311,50 @@ $("#profile_div").click(function () {
 	$(".widget").toggle();
 });
 
+//====================================== Render Pdf attachment =======================================
+function renderPdfAttachment(data) {
+    pdf_url = data.custom.url;
+    pdf_title = data.custom.title;
+    pdf_attachment =
+        '<div class="pdf_attachment">' +
+        '<div class="row">' +
+        '<div class="col s3 pdf_icon"><i class="fa fa-file-pdf-o" aria-hidden="true"></i></div>' +
+        '<div class="col s9 pdf_link">' +
+        '<a href="' + pdf_url + '" target="_blank">' + pdf_title + ' </a>' +
+        '</div>' +
+        '</div>' +
+        '</div>'
+    $(".chats").append(pdf_attachment);
+    scrollToBottomOfResults();
+
+}
+
+//====================================== DropDown ==================================================
+//render the dropdown messageand handle user selection
+function renderDropDwon(data) {
+    var options = "";
+    for (i = 0; i < data.length; i++) {
+        options += '<option value="' + data[i].value + '">' + data[i].label + '</option>'
+    }
+    var select = '<div class="dropDownMsg"><select class="browser-default dropDownSelect"> <option value="" disabled selected>Choose your option</option>' + options + '</select></div>'
+    $(".chats").append(select);
+    scrollToBottomOfResults();
+
+    //add event handler if user selects a option.
+    $("select").change(function() {
+        var value = ""
+        var label = ""
+        $("select option:selected").each(function() {
+            label += $(this).text();
+            value += $(this).val();
+        });
+
+        setUserResponse(label);
+        send(value);
+        $(".dropDownMsg").remove();
+    });
+}
+
 //====================================== Suggestions ===========================================
 
 function addSuggestion(textToAdd) {
@@ -325,7 +383,7 @@ $(document).on("click", ".menu .menuChips", function () {
 
 });
 
-//====================================== functions for drop-down menu of the bot  =========================================
+//====================================== functions for drop-down menu of the bot  =====================================
 
 //restart function to restart the conversation.
 $("#restart").click(function () {
@@ -652,4 +710,3 @@ function createChartinModal(title, labels, backgroundColor, chartsData, chartTyp
 	});
 
 }
-

@@ -1,6 +1,12 @@
 from flask import render_template, flash, redirect, url_for, request
 from flask_cors import CORS
 from app import app
+from os import environ, getcwd
+import getpass
+
+# getUser = lambda: environ["USERNAME"] if "C:" in getcwd() else environ["USER"]
+# username = getUser()
+username = getpass.getuser()
 
 
 @app.route('/')
@@ -13,10 +19,10 @@ def index():
             'body': 'I am here to help!'
         }
     ]
-    return render_template('index.html', title='Home', user=user, posts=posts)
+    return render_template('index.html', title='Home', user=username, posts=posts)
 
 
 @app.route('/chatbot')
 def chatbot():
     user = {'username': 'Abhishek'}
-    return render_template('chatbot.html', title='Chatbot', user=user)
+    return render_template('chatbot.html', title='Chatbot', user=username)

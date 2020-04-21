@@ -38,7 +38,7 @@ $(document).ready(function () {
 	//global variables
 	action_name = "utter_greet";
 	sender_id = uuid;
-	console.log(sender_id);
+	//console.log(sender_id);
 	//user_id = "iamabhishek";
 
 	//if you want the bot to start the conversation
